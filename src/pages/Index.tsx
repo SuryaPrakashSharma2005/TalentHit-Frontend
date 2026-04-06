@@ -57,7 +57,7 @@ const Index = () => {
 
     {/* Logo */}
     <Link to="/" className="text-2xl font-bold tracking-tight flex items-center gap-2">
-      🚀 <span>TalentHit</span>
+      <span>TalentHit</span>
     </Link>
 
     {/* Nav Links */}
