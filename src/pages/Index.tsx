@@ -715,7 +715,7 @@ const Index = () => {
   {/* Brand */}
   <div>
     <h4 className="text-xl font-bold flex items-center gap-2">
-      🚀 TalentHit
+      TalentHit
     </h4>
     <p className="mt-4 text-sm text-muted-foreground">
       AI-powered hiring platform that helps companies screen, evaluate,
