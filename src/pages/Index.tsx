@@ -605,7 +605,7 @@ const Index = () => {
         </Button>
       </Link>
 
-      <a href="mailto:contact@talenthit.in">
+      <a href="mailto:info.talenthit@gmail.com">
         <Button size="lg" variant="outline" className="px-10 text-base">
           Book a Demo
         </Button>
@@ -648,10 +648,10 @@ const Index = () => {
         </p>
 
         <a
-          href="mailto:contact@talenthit.in"
+          href="mailto:info.talenthit@gmail.com"
           className="block mt-4 text-primary font-medium"
         >
-          contact@talenthit.in
+          info.talenthit@gmail.com
         </a>
       </div>
 
@@ -663,7 +663,7 @@ const Index = () => {
           See TalentHit in action with a guided walkthrough
         </p>
 
-        <a href="mailto:contact@talenthit.in?subject=Demo Request">
+        <a href="mailto:info.talenthit@gmail.com?subject=Demo Request">
           <Button className="mt-4">Request Demo</Button>
         </a>
       </div>
@@ -677,7 +677,7 @@ const Index = () => {
         </p>
 
         <a
-          href="mailto:contact@talenthit.in?subject=Business Inquiry"
+          href="mailto:info.talenthit@gmail.com?subject=Business Inquiry"
           className="block mt-4 text-primary font-medium"
         >
           Connect with us →
@@ -755,10 +755,10 @@ const Index = () => {
     </Link>
 
     <a
-      href="mailto:contact@talenthit.in"
+      href="mailto:info.talenthit@gmail.com"
       className="block mt-3 text-sm text-primary"
     >
-      contact@talenthit.in
+      info.talenthit@gmail.com
     </a>
   </div>
 
