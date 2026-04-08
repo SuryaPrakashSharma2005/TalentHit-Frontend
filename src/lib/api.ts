@@ -3,8 +3,7 @@
 // ==================================================
 
 const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
-  "/api"; // 🔥 Use Vite proxy instead of hardcoded backend URL
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") // 🔥 Use Vite proxy instead of hardcoded backend URL
 
 const DEFAULT_TIMEOUT = 15000;
 
@@ -240,7 +239,7 @@ export const getActiveJobs = (skip = 0, limit = 20) =>
   get<Job[]>(`/jobs?skip=${skip}&limit=${limit}`);
 
 export const applyToJob = async (jobId: string) => {
-  const response = await fetch(`/api/jobs/${jobId}/apply`, {
+  const response = await fetch(`${BASE_URL}/jobs/${jobId}/apply`, {
     method: "POST",
     credentials: "include",
   });
@@ -470,7 +469,7 @@ export const uploadResume = async (file: File) => {
   const formData = new FormData();
   formData.append("resume_file", file);
 
-  const response = await fetch(`/api/candidate/upload-resume`, {
+  const response = await fetch(`${BASE_URL}/candidate/upload-resume`, {
     method: "POST",
     body: formData,
     credentials: "include",
