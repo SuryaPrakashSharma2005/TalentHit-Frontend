@@ -33,43 +33,46 @@ const Auth = () => {
   };
 
   const handleSubmit = async () => {
-    if (!form.email || !form.password) {
-      toast.error("Please fill all fields");
-      return;
+  if (!form.email || !form.password) {
+    toast.error("Please fill all fields");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    if (isLogin) {
+      await loginUser({
+        email: form.email,
+        password: form.password,
+      });
+    } else {
+      await registerUser({
+        email: form.email,
+        password: form.password,
+        role,
+      });
     }
 
-    try {
-      setLoading(true);
+    // 🔥 IMPORTANT: wait for localStorage + state sync
+    await new Promise((res) => setTimeout(res, 300));
 
-      if (isLogin) {
-        await loginUser({
-          email: form.email,
-          password: form.password,
-        });
-      } else {
-        await registerUser({
-          email: form.email,
-          password: form.password,
-          role,
-        });
-      }
+    await refreshUser();
 
-      await refreshUser();
+    toast.success(isLogin ? "Login successful" : "Account created");
 
-      toast.success(isLogin ? "Login successful" : "Account created");
-
-      if (role === "company") {
-        navigate("/company");
-      } else {
-        navigate("/applicant");
-      }
-    } catch (err: any) {
-      toast.error(err?.message || "Authentication failed");
-    } finally {
-      setLoading(false);
+    if (role === "company") {
+      navigate("/company");
+    } else {
+      navigate("/applicant");
     }
-  };
 
+  } catch (err: any) {
+    toast.error(err?.message || "Authentication failed");
+  } finally {
+    setLoading(false);
+  }
+};
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
