@@ -98,7 +98,6 @@ const Auth = () => {
         // Send access token to backend
         const res = await fetch(`${BASE_URL}/auth/google`, {
           method: "POST",
-          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             token: tokenResponse.access_token,

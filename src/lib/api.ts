@@ -27,18 +27,21 @@ async function apiRequest<T>(
   const timeout = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT);
 
   try {
-    const token = localStorage.getItem("access_token");
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      signal: controller.signal,
-      headers: {
-        ...(options.body instanceof FormData
-          ? {}
-          : { "Content-Type": "application/json" }),
-        ...(options.headers || {}),
-      },
-      ...options,
-    });
+    const token = localStorage.getItem("access_token"); // 🔥 MUST BE HERE
 
+const response = await fetch(`${BASE_URL}${endpoint}`, {
+  signal: controller.signal,
+  headers: {
+    ...(options.body instanceof FormData
+      ? {}
+      : { "Content-Type": "application/json" }),
+
+    ...(token ? { Authorization: `Bearer ${token}` } : {}), // 🔥 THIS LINE FIXES EVERYTHING
+
+    ...(options.headers || {}),
+  },
+  ...options,
+});
     clearTimeout(timeout);
 
     let responseData: any = null;
