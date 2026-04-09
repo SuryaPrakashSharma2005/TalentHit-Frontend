@@ -362,7 +362,13 @@ export const updateCompanySettings = (
 // ==================================================
 
 export interface AuthResponse {
-  message: string;
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  user: {
+    id: string;
+    role: "company" | "applicant";
+  };
 }
 
 export interface CurrentUser {
@@ -390,13 +396,16 @@ export const loginUser = async (data: {
   email: string;
   password: string;
 }) => {
-  const res = await post<{
-    access_token: string;
-    refresh_token: string;
-    user: { id: string; role: "company" | "applicant" };
-  }>("/auth/login", data);
+  const res = await post<AuthResponse>("/auth/login", data);
 
-  // 🔥 STORE TOKEN
+  console.log("LOGIN RESPONSE:", res); // 🔥 DEBUG
+
+  // 🚨 IMPORTANT: CHECK TOKEN EXISTS
+  if (!res.access_token) {
+    throw new Error("Token not received from server");
+  }
+
+  // ✅ STORE TOKEN
   localStorage.setItem("access_token", res.access_token);
   localStorage.setItem("refresh_token", res.refresh_token);
 
