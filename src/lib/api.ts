@@ -27,8 +27,8 @@ async function apiRequest<T>(
   const timeout = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT);
 
   try {
+    const token = localStorage.getItem("access_token");
     const response = await fetch(`${BASE_URL}${endpoint}`, {
-      credentials: "include",
       signal: controller.signal,
       headers: {
         ...(options.body instanceof FormData
@@ -238,9 +238,13 @@ export const getActiveJobs = (skip = 0, limit = 20) =>
   get<Job[]>(`/jobs?skip=${skip}&limit=${limit}`);
 
 export const applyToJob = async (jobId: string) => {
+  const token = localStorage.getItem("access_token");
+
   const response = await fetch(`${BASE_URL}/jobs/${jobId}/apply`, {
     method: "POST",
-    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {
@@ -366,21 +370,43 @@ export interface CurrentUser {
   role: "company" | "applicant";
 }
 
-export const registerUser = (data: {
+export const registerUser = async (data: {
   email: string;
   password: string;
   role: "company" | "applicant";
-}) =>
-  post<AuthResponse>("/auth/register", data);
+}) => {
+  const res = await post<{
+    access_token: string;
+    refresh_token: string;
+  }>("/auth/register", data);
 
-export const loginUser = (data: {
+  localStorage.setItem("access_token", res.access_token);
+  localStorage.setItem("refresh_token", res.refresh_token);
+
+  return res;
+};
+
+export const loginUser = async (data: {
   email: string;
   password: string;
-}) =>
-  post<AuthResponse>("/auth/login", data);
+}) => {
+  const res = await post<{
+    access_token: string;
+    refresh_token: string;
+    user: { id: string; role: "company" | "applicant" };
+  }>("/auth/login", data);
 
-export const logoutUser = () =>
-  post<AuthResponse>("/auth/logout");
+  // 🔥 STORE TOKEN
+  localStorage.setItem("access_token", res.access_token);
+  localStorage.setItem("refresh_token", res.refresh_token);
+
+  return res;
+};
+
+export const logoutUser = async () => {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+};
 
 export const getCurrentUser = () =>
   get<CurrentUser>("/auth/me");
@@ -468,10 +494,14 @@ export const uploadResume = async (file: File) => {
   const formData = new FormData();
   formData.append("resume_file", file);
 
+  const token = localStorage.getItem("access_token");
+
   const response = await fetch(`${BASE_URL}/candidate/upload-resume`, {
     method: "POST",
     body: formData,
-    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {
