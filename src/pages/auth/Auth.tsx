@@ -74,60 +74,58 @@ const Auth = () => {
   }
 };
   const handleGoogleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        setGoogleLoading(true);
+  onSuccess: async (tokenResponse) => {
+    try {
+      setGoogleLoading(true);
 
-        // Exchange access token for id_token via Google userinfo
-        const userInfoRes = await fetch(
-          "https://www.googleapis.com/oauth2/v3/userinfo",
-          {
-            headers: {
-              Authorization: `Bearer ${tokenResponse.access_token}`,
-            },
-          }
-        );
+      const BASE_URL =
+        import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "/api";
 
-        if (!userInfoRes.ok) {
-          throw new Error("Failed to fetch Google user info");
-        }
+      // 🔥 Send access token to backend
+      const res = await fetch(`${BASE_URL}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: tokenResponse.access_token,
+          role,
+        }),
+      });
 
-        const BASE_URL =
-          import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "/api";
-
-        // Send access token to backend
-        const res = await fetch(`${BASE_URL}/auth/google`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            token: tokenResponse.access_token,
-            role,
-          }),
-        });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail || "Google login failed");
-        }
-
-        await refreshUser();
-        toast.success("Google login successful");
-
-        if (role === "company") {
-          navigate("/company");
-        } else {
-          navigate("/applicant");
-        }
-      } catch (err: any) {
-        toast.error(err?.message || "Google login failed");
-      } finally {
-        setGoogleLoading(false);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || "Google login failed");
       }
-    },
-    onError: () => {
-      toast.error("Google login failed");
-    },
-  });
+
+      // 🔥 GET RESPONSE DATA
+      const data = await res.json();
+
+      console.log("GOOGLE LOGIN RESPONSE:", data);
+
+      // 🔥 STORE TOKENS (MOST IMPORTANT FIX)
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
+
+      // 🔥 NOW LOAD USER
+      await refreshUser();
+
+      toast.success("Google login successful");
+
+      if (role === "company") {
+        navigate("/company");
+      } else {
+        navigate("/applicant");
+      }
+
+    } catch (err: any) {
+      toast.error(err?.message || "Google login failed");
+    } finally {
+      setGoogleLoading(false);
+    }
+  },
+  onError: () => {
+    toast.error("Google login failed");
+  },
+});
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
