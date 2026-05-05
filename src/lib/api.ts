@@ -1,8 +1,10 @@
+import { env } from "process";
 // ==================================================
 // BASE CONFIG
 // ==================================================
 
-const BASE_URL = "https://api.talenthit.in"; // 🔥 Use Vite proxy instead of hardcoded backend URL
+
+const BASE_URL = env.VITE_API_URL; // 🔥 Use Vite proxy instead of hardcoded backend URL
 
 const DEFAULT_TIMEOUT = 15000;
 
@@ -636,3 +638,9 @@ export const submitCodingTest = async (
     { answers }
   )
 }
+
+export const sendOtp = (email: string) =>
+  post<{ message: string }>("/auth/send-otp", { email });
+
+export const verifyOtp = (email: string, otp: string) =>
+  post<{ message: string }>("/auth/verify-otp", { email, otp });
