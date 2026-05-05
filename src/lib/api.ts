@@ -4,7 +4,7 @@
 // ==================================================
 
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL; // 🔥 Use Vite proxy instead of hardcoded backend URL
+const BASE_URL = "https://api.talenthit.in"; // 🔥 Use Vite proxy instead of hardcoded backend URL
 
 const DEFAULT_TIMEOUT = 15000;
 
