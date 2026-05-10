@@ -6,6 +6,7 @@ import { loginUser, registerUser, sendOtp, verifyOtp } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "react-hot-toast";
 import { useGoogleLogin } from "@react-oauth/google";
+import { Loader2 } from "lucide-react";
 
 const Auth = () => {
 const navigate = useNavigate();
@@ -31,6 +32,7 @@ const [otp, setOtp] = useState("");
 const [form, setForm] = useState({
 email: "",
 password: "",
+confirmPassword: "",
 });
 
 const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,6 +84,12 @@ return;
 // 🔥 BLOCK SIGNUP WITHOUT OTP
 if (!isLogin && !otpVerified) {
   toast.error("Please verify OTP first");
+  return;
+}
+
+// 🔥 CHECK PASSWORD MATCH FOR SIGNUP
+if (!isLogin && form.password !== form.confirmPassword) {
+  toast.error("Passwords do not match");
   return;
 }
 
@@ -210,13 +218,31 @@ return ( <div className="min-h-screen flex items-center justify-center bg-backgr
         onChange={handleChange}
       />
 
-      <Button onClick={handleSubmit} disabled={loading}>
-        {loading
-          ? "Please wait..."
-          : isLogin
-          ? "Login"
-          : "Sign Up"}
-      </Button>
+      {/* Confirm Password for Signup */}
+      {!isLogin && (
+        <Input
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          type="password"
+          value={form.confirmPassword}
+          onChange={handleChange}
+        />
+      )}
+
+      <div className="flex justify-center">
+        <Button onClick={handleSubmit} disabled={loading} className="w-full max-w-xs">
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              Please wait...
+            </>
+          ) : isLogin ? (
+            "Login"
+          ) : (
+            "Sign Up"
+          )}
+        </Button>
+      </div>
     </div>
 
     {/* Toggle */}
@@ -229,6 +255,7 @@ return ( <div className="min-h-screen flex items-center justify-center bg-backgr
           setOtpSent(false);
           setOtpVerified(false);
           setOtp("");
+          setForm({ email: "", password: "", confirmPassword: "" });
         }}
         className="ml-2 text-primary font-medium hover:underline"
       >
@@ -250,7 +277,11 @@ return ( <div className="min-h-screen flex items-center justify-center bg-backgr
       onClick={() => handleGoogleLogin()}
       disabled={googleLoading}
     >
-      Continue with Google
+      {googleLoading ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        "Continue with Google"
+      )}
     </Button>
 
   </div>
