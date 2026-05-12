@@ -115,11 +115,46 @@ export interface Job {
 }
 export interface RecommendedJob {
   _id: string;
+
   title: string;
+
+  company_name: string;
+  company_logo?: string;
+  company_website?: string;
+
+  domain?: string;
+  department?: string;
+
   min_experience: number;
+
   required_skills: string[];
+
   match_percentage: number;
 }
+export interface JobDetails {
+  _id: string;
+
+  title: string;
+  description?: string;
+
+  domain?: string;
+  department?: string;
+
+  required_skills: string[];
+
+  min_experience: number;
+  openings: number;
+
+  created_at?: string;
+
+  company_name: string;
+  company_logo?: string;
+  company_website?: string;
+  company_description?: string;
+
+  share_url: string;
+}
+
 export interface Application {
   _id: string;
   job_id: string;
@@ -344,6 +379,7 @@ export interface CompanySettings {
   name: string;
   email: string;
   website: string;
+  logo?: string;
   notify_new_applications: boolean;
   notify_assessment_complete: boolean;
   notify_weekly_reports: boolean;
@@ -413,6 +449,8 @@ export const loginUser = async (data: {
   // ✅ STORE TOKEN
   localStorage.setItem("access_token", res.access_token);
   localStorage.setItem("refresh_token", res.refresh_token);
+  localStorage.setItem("user", JSON.stringify(res.user));
+
 
   return res;
 };
@@ -644,3 +682,6 @@ export const sendOtp = (email: string) =>
 
 export const verifyOtp = (email: string, otp: string) =>
   post<{ message: string }>("/auth/verify-otp", { email, otp });
+
+export const getJobDetails = (jobId: string) =>
+  get<JobDetails>(`/jobs/${jobId}`);

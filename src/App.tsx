@@ -43,6 +43,7 @@ import { ApplicantProfile } from "./pages/applicant/ApplicantProfile";
 import { ApplicantSettings } from "./pages/applicant/ApplicantSettings";
 import TestPage from "./pages/applicant/TestPage";
 import CodingAssessmentPage from "./pages/applicant/CodingAssessmentPage";
+import JobDetails from "./pages/applicant/JobDetails";
 
 /* ---------------- Query Client ---------------- */
 
@@ -118,6 +119,10 @@ const App = () => (
               <Route
                 path="coding/:applicationId"
                 element={<CodingAssessmentPage />}
+              />
+              <Route
+                path="/jobs/:jobId"
+                element={<JobDetails />}
               />
 
               {/* ================= COMPANY ================= */}

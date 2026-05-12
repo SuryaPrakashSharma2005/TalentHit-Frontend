@@ -18,6 +18,8 @@ import {
 } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "react-hot-toast";
+import { Link } from "react-router-dom";
+import { link } from "fs";
 
 export const FindJobs = () => {
   const { user } = useAuth();
@@ -148,93 +150,129 @@ export const FindJobs = () => {
               (job.match_percentage ?? 0) >= 60;
 
             return (
-              <Card key={job._id}>
-                <CardContent className="p-5 flex justify-between">
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                      <Building2 className="w-6 h-6 text-primary" />
-                    </div>
+              <Link to={`/jobs/${job._id}`}>
+                <Card key={job._id}>
+                  <CardContent className="p-5 flex justify-between">
+                    <div className="flex gap-4">
+                      {/* COMPANY LOGO */}
+                      {job.company_logo ? (
+                        <img
+                          src={job.company_logo}
+                          alt={job.company_name}
+                          className="w-12 h-12 rounded-xl object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                          <Building2 className="w-6 h-6 text-primary" />
+                        </div>
+                      )}
 
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold">
-                          {job.title}
-                        </h3>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="font-semibold text-lg">
+                            {job.title}
+                          </h3>
 
-                        {isRecommended && (
-                          <span className="flex items-center gap-1 text-xs px-2 py-1 bg-green-500/10 text-green-600 rounded">
-                            <Star className="w-3 h-3" />
-                            Recommended
-                          </span>
-                        )}
-                      </div>
+                          {isRecommended && (
+                            <span className="flex items-center gap-1 text-xs px-2 py-1 bg-green-500/10 text-green-600 rounded">
+                              <Star className="w-3 h-3" />
+                              Recommended
+                            </span>
+                          )}
+                        </div>
 
-                      <p className="text-muted-foreground">
-                        Experience: {job.min_experience ?? 0} yrs
-                      </p>
+                        {/* COMPANY NAME */}
+                        <p className="text-sm text-primary font-medium mt-1">
+                          {job.company_name}
+                        </p>
 
-                      <div className="flex gap-2 mt-2 flex-wrap">
-                        {(job.required_skills || []).map(
-                          (skill) => (
+                        {/* DOMAIN + DEPARTMENT */}
+                        <div className="flex gap-2 mt-2 flex-wrap">
+                          {job.domain && (
+                            <span className="px-2 py-1 bg-primary/10 rounded text-xs">
+                              {job.domain}
+                            </span>
+                          )}
+
+                          {job.department && (
+                            <span className="px-2 py-1 bg-accent rounded text-xs">
+                              {job.department}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* EXPERIENCE */}
+                        <p className="text-muted-foreground mt-2">
+                          Experience: {job.min_experience ?? 0} yrs
+                        </p>
+
+                        {/* SKILLS */}
+                        <div className="flex gap-2 mt-3 flex-wrap">
+                          {(job.required_skills || []).map((skill) => (
                             <span
                               key={skill}
                               className="px-2 py-1 bg-accent rounded text-xs"
                             >
                               {skill}
                             </span>
-                          )
-                        )}
+                          ))}
+                        </div>
+
+                        {/* MATCH */}
+                        <p className="text-xs text-green-600 mt-3">
+                          {job.match_percentage}% skill match
+                        </p>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex flex-col items-end gap-3">
-                    {/* SAVE */}
-                    <button
-                      onClick={() => toggleSave(job._id)}
-                      className={`p-2 rounded-lg transition ${
-                        savedJobs.includes(job._id)
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground"
-                      }`}
-                    >
-                      <Bookmark
-                        className={
-                          savedJobs.includes(job._id)
-                            ? "fill-current"
-                            : ""
+                    <div className="flex flex-col items-end gap-3">
+                      {/* SAVE */}
+                      <button
+                        onClick={() => toggleSave(job._id)}
+                        className={`p-2 rounded-lg transition ${savedJobs.includes(job._id)
+                            ? "bg-primary/10 text-primary"
+                            : "text-muted-foreground"
+                          }`}
+                      >
+                        <Bookmark
+                          className={
+                            savedJobs.includes(job._id)
+                              ? "fill-current"
+                              : ""
+                          }
+                        />
+                      </button>
+
+                      {/* APPLY */}
+                      <Button
+                        disabled={
+                          applyingJobId === job._id || isApplied
                         }
-                      />
-                    </button>
-
-                    {/* APPLY */}
-                    <Button
-                      disabled={
-                        applyingJobId === job._id || isApplied
-                      }
-                      onClick={() => handleApply(job._id)}
-                    >
-                      {applyingJobId === job._id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : isApplied ? (
-                        "Applied"
-                      ) : (
-                        "Apply"
-                      )}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
+                        onClick={() => handleApply(job._id)}
+                      >
+                        {applyingJobId === job._id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : isApplied ? (
+                          "Applied"
+                        ) : (
+                          "Apply"
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                </Link>
+                );
           })}
 
-          {filteredJobs.length === 0 && (
-            <div className="text-muted-foreground text-center py-6">
-              No jobs found.
-            </div>
-          )}
-        </div>
-      )}
+                {filteredJobs.length === 0 && (
+                  <div className="text-muted-foreground text-center py-6">
+                    No jobs found.
+                  </div>
+                )}
+              </div>
+            )
+          }
     </div>
-  );
+      );
 };

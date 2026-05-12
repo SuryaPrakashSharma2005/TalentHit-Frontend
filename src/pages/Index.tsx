@@ -136,7 +136,7 @@ const Index = () => {
     </div>
 
     <div className="relative">
-      <div className="rounded-[32px] border border-slate-200/60 bg-white/95 p-8 shadow-[0_25px_80px_-40px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+      <div className="rounded-[32px] border border-slate-200/60 bg-gradient-to-r from-primary/20 via-slate-100/60 to-emerald-100/20 p-8 shadow-[0_25px_80px_-40px_rgba(15,23,42,0.35)] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-4 mb-8">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Live assessment preview</p>
