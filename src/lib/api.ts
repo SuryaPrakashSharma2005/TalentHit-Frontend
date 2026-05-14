@@ -136,6 +136,8 @@ export interface JobDetails {
 
   title: string;
   description?: string;
+  perks?: string[];
+  eligibility_criteria?: string;
 
   domain?: string;
   department?: string;
@@ -333,6 +335,9 @@ export const getCompanyAnalytics = () =>
 
 export const createJob = (data: {
   title: string;
+  description?: string;
+  perks?: string[];
+  eligibility_criteria?: string;
   required_skills: string[];
   min_experience: number;
   department?: string;

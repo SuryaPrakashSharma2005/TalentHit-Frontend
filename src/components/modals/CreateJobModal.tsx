@@ -82,6 +82,8 @@ interface CreateJobModalProps {
 export function CreateJobModal({ open, onClose }: CreateJobModalProps) {
   const [title, setTitle] = useState("");
   const [department, setDepartment] = useState("");
+  const [description, setDescription] = useState("");
+  const [eligibility_criteria, setEligibilityCriteria] = useState("");
 
   const [domain, setDomain] = useState("");
   const [subDomain, setSubDomain] = useState("");
@@ -91,6 +93,8 @@ export function CreateJobModal({ open, onClose }: CreateJobModalProps) {
 
   const [skillTags, setSkillTags] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState("");
+    const [Perks, setPerks] = useState<string[]>([]);
+  const [newPerk, setNewPerk] = useState("");
 
   const [experienceMin, setExperienceMin] = useState("0");
   const [experienceMax, setExperienceMax] = useState("3");
@@ -106,13 +110,25 @@ export function CreateJobModal({ open, onClose }: CreateJobModalProps) {
       setNewSkill("");
     }
   };
+  const handleAddPerk = () => {
+    if (newPerk.trim() && !Perks.includes(newPerk.trim())) {
+      setPerks([...Perks, newPerk.trim()]);
+      setNewPerk("");
+    }
+  };
 
   const handleRemoveSkill = (skill: string) => {
     setSkillTags(skillTags.filter((s) => s !== skill));
   };
+  
+    const handleRemovePerk = (perk: string) => {
+    setPerks(Perks.filter((p) => p !== perk));
+  };
 
   const resetForm = () => {
     setTitle("");
+    setDescription("");
+    setEligibilityCriteria("");
     setDepartment("");
     setDomain("");
     setSubDomain("");
@@ -162,6 +178,9 @@ export function CreateJobModal({ open, onClose }: CreateJobModalProps) {
 
       await createJob({
         title,
+        description,
+        perks: Perks,
+        eligibility_criteria,
         required_skills: skillTags,
         min_experience: Number(experienceMin),
         department,
@@ -201,7 +220,59 @@ export function CreateJobModal({ open, onClose }: CreateJobModalProps) {
               placeholder="e.g. Backend Developer"
             />
           </div>
+          {/* Job Description */}
+          <div className="space-y-2">
+            <Label>Job Description</Label>
 
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe the role, responsibilities, requirements, perks, etc."
+              className="
+      w-full
+      min-h-[140px]
+      rounded-md
+      border
+      border-input
+      bg-background
+      px-3
+      py-2
+      text-sm
+      ring-offset-background
+      placeholder:text-muted-foreground
+      focus-visible:outline-none
+      focus-visible:ring-2
+      focus-visible:ring-ring
+    "
+            />
+          </div>
+            {/* Eligibility Criteria */}
+            {/* Eligibility Criteria */}
+          <div className="space-y-2">
+            <Label>Eligibility Criteria</Label>
+
+            <textarea
+              value={eligibility_criteria}
+              onChange={(e) => setEligibilityCriteria(e.target.value)}
+              placeholder="Describe the role, responsibilities, requirements, perks, etc."
+              className="
+      w-full
+      min-h-[140px]
+      rounded-md
+      border
+      border-input
+      bg-background
+      px-3
+      py-2
+      text-sm
+      ring-offset-background
+      placeholder:text-muted-foreground
+      focus-visible:outline-none
+      focus-visible:ring-2
+      focus-visible:ring-ring
+    "
+            />
+          </div>
           {/* Department */}
           <div className="space-y-2">
             <Label>Department</Label>
@@ -357,6 +428,42 @@ export function CreateJobModal({ open, onClose }: CreateJobModalProps) {
                 value={experienceMax}
                 onChange={(e) => setExperienceMax(e.target.value)}
               />
+            </div>
+          </div>
+              {/* Skills */}
+          <div className="space-y-2">
+            <Label>Perks</Label>
+
+            <div className="flex gap-2">
+              <Input
+                value={newPerk}
+                onChange={(e) => setNewPerk(e.target.value)}
+                placeholder="Add perks"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddPerk();
+                  }
+                }}
+              />
+
+              <Button type="button" onClick={handleAddPerk} size="icon">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="flex flex-wrap gap-2 mt-2">
+              {Perks.map((perk) => (
+                <Badge key={perk} variant="secondary" className="gap-1">
+                  {perk}
+                  <button
+                    type="button"
+                    onClick={() => handleRemovePerk(perk)}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
             </div>
           </div>
 

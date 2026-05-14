@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Users, Calendar, Tag, Eye } from "lucide-react";
 import { CreateJobModal } from "@/components/modals/CreateJobModal";
 import toast from "react-hot-toast";
-import { getCompanyJobsBackend, closeJob,} from "@/lib/api";
+import { getCompanyJobsBackend, closeJob,JobDetails as JobDetailsType,} from "@/lib/api";
+import { Copy } from "lucide-react";
+
 
 interface Job {
   _id: string;
@@ -50,6 +52,25 @@ export default function JobManagement() {
       setLoading(false);
     }
   };
+
+const copyLink = async (jobId: string) => {
+
+  try {
+
+    const link =
+      `${window.location.origin}/jobs/${jobId}`;
+
+    await navigator.clipboard.writeText(link);
+
+    toast.success("Job link copied!");
+
+  } catch (err) {
+
+    toast.error("Failed to copy link");
+  }
+};
+
+
 
   const handleCloseJob = async (jobId: string) => {
     try {
@@ -113,7 +134,13 @@ export default function JobManagement() {
                   <CardTitle className="text-xl">
                     {job.title}
                   </CardTitle>
-
+                  <Button
+                variant="outline"
+                onClick={() => copyLink(job._id)}
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copy Link
+              </Button>
                   <Badge
                     variant={job.status === "ACTIVE" ? "default" : "secondary"}
                   >
